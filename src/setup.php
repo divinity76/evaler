@@ -129,9 +129,16 @@ for ($i = 1; $i <= JAIL_USERS; ++ $i) {
 }
 file_put_contents("/jail/jailaccounts.json", json_encode($db), LOCK_EX);
 echo " done.\n";
+echo "creating /etc/sudoers.d/www-data-jailexecutor with >> www-data ALL = (root) NOPASSWD: /usr/bin/php /jail/jailexecutor.php..";
 file_put_contents("/etc/sudoers.d/www-data-jailexecutor", "www-data ALL = (root) NOPASSWD: /usr/bin/php /jail/jailexecutor.php", LOCK_EX);
+echo " done.\n";
+echo "copying jailexecutor.php to /jail..";
+if (true !== copy("./jailexecutor.php", "/jail/jailexecutor.php")) {
+    throw new \RuntimeException("FAILED TO COPY JAILEXECUTOR TO /jail/jailexecutor.php");
+}
+chmod("/jail/jailexecutor.php", 0400);
+echo " done.\n";
 echo "setup complete!\n";
-echo "next up, add this to /etc/sudoers: www-data ALL = (root) NOPASSWD: /usr/bin/php /jail/jailexecutor.php\n";
 
 function return_var_dump(): string
 {
