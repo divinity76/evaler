@@ -250,8 +250,8 @@ function get_jail_user(): int
         $new_data = json_encode($accounts);
         fwrite($fp, $new_data);
         ftruncate($fp, strlen($new_data));
-        unset($new_data);
         flock($fp, LOCK_UN);
+        unset($new_data);
         fclose($fp);
     });
     return $cached;
