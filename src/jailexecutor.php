@@ -21,6 +21,8 @@ class Config
 
     public static $runtime_max_seconds = 5;
 
+    public static $stdin = "";
+
     public static $run_steps = array(
         '/usr/bin/env php %code_filename%'
     );
@@ -112,6 +114,9 @@ var_dump("chroot cmd: ", $chroot_cmd) & die();
 $ph = proc_open($chroot_cmd, $descriptorspec, $pipes);
 if (false === $ph) {
     throw new RuntimeException("failed to start chroot!  cmd: {$chroot_cmd}");
+}
+if (strlen(Config::$stdin) > 0) {
+    fwrite($pipes[0], Config::$stdin);
 }
 fclose($pipes[0]);
 unset($pipes[0]);
