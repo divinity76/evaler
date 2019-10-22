@@ -110,7 +110,7 @@ $chroot_cmd = implode(" ", array(
         $chroot_cmd_inner
     )))
 ));
-var_dump("chroot cmd: ", $chroot_cmd) & die();
+// var_dump("chroot cmd: ", $chroot_cmd) & die();
 $ph = proc_open($chroot_cmd, $descriptorspec, $pipes);
 if (false === $ph) {
     throw new RuntimeException("failed to start chroot!  cmd: {$chroot_cmd}");
