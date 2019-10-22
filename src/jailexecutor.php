@@ -33,16 +33,19 @@ class Config
     {
         $decoded = json_decode($json, true);
         foreach ($decoded as $prop => $val) {
-            if (! property_exists("Config", $prop)) {
-                throw new \InvalidArgumentException("unknown property \"{$prop}\"");
-            }
-            if ($prop === "code_filename") {
+            if ($prop === "stdin_base64") {
+                // to support binary data in stdin..
+                Config::$stdin = base64_decode($val, false);
+                continue;
+            } elseif ($prop === "code_filename") {
                 if ($val !== basename($val)) {
                     throw new \LogicException("FIXME code_filename attempted directory traversal and/or absolute path! currently not supported..");
                 }
                 // TODO: more validation, does it include null bytes? is it over 100 characters long? etc
+            } elseif (! property_exists("Config", $prop)) {
+                throw new \InvalidArgumentException("unknown property \"{$prop}\"");
             }
-            Config::$prop = $val;
+            Config::$$prop = $val;
         }
     }
 }
