@@ -21,9 +21,11 @@ class Config
 
     public static $runtime_max_seconds = 5;
 
-    public static $code_filename = "code.php";
+    public static $run_steps = array(
+        '/usr/bin/env php %code_filename%'
+    );
 
-    public static $code_executor = "/usr/bin/php";
+    public static $code_filename = "code.php";
 
     public static function init_from_json(string $json): void
     {
@@ -34,11 +36,9 @@ class Config
             }
             if ($prop === "code_filename") {
                 if ($val !== basename($val)) {
-                    throw new \LogicException("FIXME code_filename attempted directory traversal! currently not supported..");
+                    throw new \LogicException("FIXME code_filename attempted directory traversal and/or absolute path! currently not supported..");
                 }
-            }
-            if ($prop === "code_executor") {
-                throw new \LogicException("FIXME custom code_executor currently not supported..");
+                // TODO: more validation, does it include null bytes? is it over 100 characters long? etc
             }
             Config::$prop = $val;
         }
@@ -89,17 +89,26 @@ $descriptorspec = array(
     ) // stderr
 );
 $pipes = [];
-// basically: chroot --userspec=jailuser123:jailgroup /jail /bin/sh -c 'cd /home/jailuser123; /usr/bin/php code.php'
+// basically: chroot --userspec=jailuser123:jailgroup /jail /bin/sh -c 'cd /home/jailuser123; /usr/bin/env php code.php'
+// real example: chroot --userspec='jailuser1':'jailgroup' '/jail' /bin/sh -c 'cd '\''/home/jailuser1'\''; /usr/bin/env php '\''code.php'\''; '
+$chroot_cmd_inner = "";
+$premature_optimization_code_filename = escapeshellarg(Config::$code_filename);
+foreach (Config::$run_steps as $tmp) {
+    $chroot_cmd_inner .= strtr($tmp, array(
+        '%code_filename%' => $premature_optimization_code_filename
+    )) . "; ";
+}
+unset($tmp, $premature_optimization_code_filename);
 $chroot_cmd = implode(" ", array(
     'chroot',
     '--userspec=' . escapeshellarg($jail_user) . ":" . escapeshellarg("jailgroup"),
     escapeshellarg('/jail'),
     '/bin/sh -c ' . escapeshellarg(implode(" ", array(
         'cd ' . escapeshellarg("/home/{$jail_user}") . ";",
-        escapeshellarg(Config::$code_executor) . " " . escapeshellarg(Config::$code_filename)
+        $chroot_cmd_inner
     )))
 ));
-// var_dump("chroot cmd: ", $chroot_cmd) & die();
+var_dump("chroot cmd: ", $chroot_cmd) & die();
 $ph = proc_open($chroot_cmd, $descriptorspec, $pipes);
 if (false === $ph) {
     throw new RuntimeException("failed to start chroot!  cmd: {$chroot_cmd}");
