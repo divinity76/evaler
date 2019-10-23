@@ -16,7 +16,7 @@ class Config
     // 8 megabytes, no particular reason for this default
     public static $output_max_bytes = 8 * 1024 * 1024;
 
-    // -1 is "keep reading until EOF
+    // -1 is "keep reading until EOF"
     public static $code_byte_length = - 1;
 
     public static $runtime_max_seconds = 5;

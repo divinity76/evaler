@@ -139,6 +139,12 @@ if (true !== copy("./jailexecutor.php", "/jail/jailexecutor.php")) {
 }
 chmod("/jail/jailexecutor.php", 0400);
 echo " done.\n";
+echo "copying /etc/resolv.conf to /jail/etc/resolv.conf..";
+if (true !== copy("/etc/resolv.conf", "/jail/etc/resolv.conf")) {
+    throw new \RuntimeException("FAILED TO COPY JAILEXECUTOR TO /jail/jailexecutor.php");
+}
+chmod("/jail/etc/resolv.conf", 0444);
+echo " done.\n";
 echo "setup complete!\n";
 
 function return_var_dump(): string
