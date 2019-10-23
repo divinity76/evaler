@@ -134,7 +134,7 @@ $proxy_out = function (bool &$output_max_bytes_exceeded = null) use (&$pipes, &$
     $max = 0xFFF;
     $ret = false;
     for ($i = 0; $i < $max; ++ $i) {
-        $tmp = fread($pipes[1], 8 * 1024);
+        $tmp = fread($pipes[1], 8 * 4096);
         if ($tmp === false || strlen($tmp) < 1) {
             break;
         }
@@ -148,7 +148,7 @@ $proxy_out = function (bool &$output_max_bytes_exceeded = null) use (&$pipes, &$
         }
     }
     for ($i = 0; $i < $max; ++ $i) {
-        $tmp = fread($pipes[2], 8 * 1024);
+        $tmp = fread($pipes[2], 8 * 4096);
         if ($tmp === false || strlen($tmp) < 1) {
             break;
         }
