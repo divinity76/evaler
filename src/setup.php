@@ -58,6 +58,12 @@ chmod -R 0711 /jail
 chmod -R 0755 /jail/etc/php
 # everybody can execute and write (but not read)
 chmod -R 0733 /jail/tmp
+
+mkdir /jail/dev
+chown 0755 /jail/dev
+mknod -m 0666 /jail/dev/null c 1 3
+
+
 chown -R root:root /jail
 #mount -o bind,ro /dev /jail/dev
 #mount -o bind,ro /dev/pts /jail/dev/pts
