@@ -64,6 +64,8 @@ chown 0755 /jail/dev
 mknod -m 0666 /jail/dev/null c 1 3
 mknod -m 0666 /jail/dev/full c 1 7
 mknod -m 0666 /jail/dev/zero c 1 5
+mknod -m 0666 /jail/dev/urandom c 1 5
+mknod -m 0666 /jail/dev/random c 1 5
 
 chown -R root:root /jail
 #mount -o bind,ro /dev /jail/dev
