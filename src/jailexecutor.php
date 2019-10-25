@@ -274,6 +274,24 @@ function get_jail_user(): int
     return $cached;
 }
 
+function pkilluser(string $username): void
+{
+    $premature_optimization_username = escapeshellarg($username);
+    $ret = 0;
+    for (;;) {
+        passthru("killall --quiet -u {$premature_optimization_username} -S STOP", $ret);
+        if ($ret === 1) {
+            // means there is nothing to kill
+            return;
+        }
+        passthru("killall --quiet --wait -u {$premature_optimization_username} -S KILL", $ret);
+        if ($ret === 1) {
+            // means nothing to kill
+            return;
+        }
+    }
+}
+
 function pkilltree(int $pid)
 {
     shell_exec("kill -s STOP " . $pid . " 2>&1"); // stop it first, so it can't make any more children
