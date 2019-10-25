@@ -280,13 +280,13 @@ function pkilltree(int $pid)
     $children = shell_exec('pgrep -P ' . $pid);
     if (is_string($children)) {
         $children = trim($children);
-    }
-    if (! empty($children)) {
-        $children = array_filter(array_map('trim', explode("\n", $children)), function ($in) {
-            return false !== filter_var($in, FILTER_VALIDATE_INT); // shouldn't be necessary, but just to be safe..
-        });
-        foreach ($children as $child) {
-            pkilltree((int) $child);
+        if (! empty($children)) {
+            $children = array_filter(array_map('trim', explode("\n", $children)), function ($in) {
+                return false !== filter_var($in, FILTER_VALIDATE_INT); // shouldn't be necessary, but just to be safe..
+            });
+            foreach ($children as $child) {
+                pkilltree((int) $child);
+            }
         }
     }
     shell_exec("kill -s KILL " . $pid . " 2>&1");
