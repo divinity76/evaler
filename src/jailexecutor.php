@@ -35,7 +35,12 @@ class Config
         foreach ($decoded as $prop => $val) {
             if ($prop === "stdin_base64") {
                 // to support binary data in stdin..
-                Config::$stdin = base64_decode($val, false);
+                if (! empty($val)) {
+                    Config::$stdin = base64_decode($val, false);
+                }
+                continue;
+            } elseif ($prop === "stdin" && empty($val)) {
+                // don't overwrite stdin_base64 set value
                 continue;
             } elseif ($prop === "code_filename") {
                 if ($val !== basename($val)) {
