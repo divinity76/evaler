@@ -68,15 +68,15 @@ mknod -m 0666 /jail/dev/urandom c 1 5
 mknod -m 0666 /jail/dev/random c 1 5
 
 chown -R root:root /jail
-#mount -o bind,ro /dev /jail/dev
-#mount -o bind,ro /dev/pts /jail/dev/pts
-mount -o bind,ro /bin /jail/bin
-mount -o bind,ro /lib /jail/lib
-mount -o bind,ro /lib64 /jail/lib64
-mount -o bind,ro /usr /jail/usr
-#mount -o bind,ro /etc/ /jail/etc/
-mount -o bind,ro /etc/php /jail/etc/php
-mount -o bind,ro /etc/alternatives /jail/etc/alternatives
+#mount -o bind,ro,nosuid /dev /jail/dev
+#mount -o bind,ro,nosuid /dev/pts /jail/dev/pts
+mount -o bind,ro,nosuid /bin /jail/bin
+mount -o bind,ro,nosuid /lib /jail/lib
+mount -o bind,ro,nosuid /lib64 /jail/lib64
+mount -o bind,ro,nosuid /usr /jail/usr
+#mount -o bind,ro,nosuid /etc/ /jail/etc/
+mount -o bind,ro,nosuid /etc/php /jail/etc/php
+mount -o bind,ro,nosuid /etc/alternatives /jail/etc/alternatives
 #adduser jailgroup
 COMMANDS;
 $commands = array_filter(array_map("trim", explode("\n", $commands)), function (string $str) {
